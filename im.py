@@ -60,11 +60,11 @@ def generalGreedy():
 def cascade(seed, results): ##DFS
   if seed not in results:
     results.append(seed)
-    for e in seed.getOutEdges():
-      dest = e.getDest()
-      if dest not in results:
-        results.append(dest)
-        cascade(dest, results)
+  for e in seed.getOutEdges():
+    dest = e.getDest()
+    if dest not in results:
+      results.append(dest)
+      cascade(dest, results)
 
 
 def getMaximumNode(nodes):
