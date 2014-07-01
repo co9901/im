@@ -11,17 +11,16 @@ seedCount = 0
 
 def main(k):
   global seedCount
-  global G
   seedCount = k
 
   generalGreedy()
-  G.draw()
+  printResults()
 
 def initialize(filename):
   global G
 
-  file = open(filename,'r')
-  for line in file:
+  inputFile = open(filename,'r')
+  for line in inputFile:
     elements = line.split()
     if elements[0] == "node":
       n = Node(elements[1], elements[2])
@@ -29,6 +28,18 @@ def initialize(filename):
     elif elements[0] == "edge":
       e = Edge(elements[1])
       G.addEdge(e, elements[2], elements[3])
+  inputFile.close()
+
+def printResults():
+  global G
+
+  G.draw()
+  outputFile = open('output.txt','w')
+  outputFile.write("Seed\n")
+  for s in G.getSeeds():
+    outputFile.write(s.getId() + " " + s.getName() + "\n")
+  outputFile.close()
+
 
 
 def generalGreedy():
