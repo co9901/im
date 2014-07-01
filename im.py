@@ -5,21 +5,29 @@ from graph import Graph
 
 #G graph
 #seedCount
+#inputFileName
+#outputFileName
 
 G = Graph()
 seedCount = 0
 
-def main(k):
-  global seedCount
-  seedCount = k
+def main():
 
   generalGreedy()
   printResults()
 
-def initialize(filename):
+def initialize(k,inputName,outputName):
   global G
+  global seedCount
+  global inputFileName
+  global outputFileName
 
-  inputFile = open(filename,'r')
+  seedCount = k
+  inputFileName = inputName
+  outputFileName = outputName
+
+
+  inputFile = open(inputFileName,'r')
   for line in inputFile:
     elements = line.split()
     if elements[0] == "node":
@@ -32,9 +40,10 @@ def initialize(filename):
 
 def printResults():
   global G
+  global outputFileName
 
   G.draw()
-  outputFile = open('output.txt','w')
+  outputFile = open(outputFileName,'w')
   outputFile.write("Seed\n")
   for s in G.getSeeds():
     outputFile.write(s.getId() + " " + s.getName() + "\n")
@@ -76,8 +85,11 @@ def getMaximumNode(nodes):
 
 
 if __name__ == "__main__":
-  initialize(sys.argv[2])
-  main(int(sys.argv[1]))
+  k = int(sys.argv[1]) if len(sys.argv) > 1 else 2
+  input = sys.argv[2] if len(sys.argv) > 2 else "input.txt"
+  output = sys.argv[3] if len(sys.argv) > 3 else "output.txt"
+  initialize(k,input,output)
+  main()
 
 
 
