@@ -9,18 +9,13 @@ class Graph:
 
   #graph Digraph
   #seeds
-  #nodes
-  #edges
 
   def __init__(self):
     self.graph = nx.DiGraph()
-    self.nodes = []
-    self.edges = []
     self.seeds = []
 
   def addNode(self, node):
     self.graph.add_node(node)
-    self.nodes.append(node)
 
   def addEdge(self, edge, srcId, destId):
     src = self.getNode(srcId)
@@ -31,13 +26,12 @@ class Graph:
       src.addOutEdge(edge)
       dest.addInEdge(edge)
       self.graph.add_edge(edge.getSrc(), edge.getDest(), weight = edge.getProb())
-      self.edges.append(edge)
 
   def getNodes(self):
-    return self.nodes
+    return self.graph.node
 
   def getNode(self, id):
-    for v in self.nodes:
+    for v in self.getNodes():
       if v.id == id:
         return v
     return None
