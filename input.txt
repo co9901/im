@@ -1,28 +1,45 @@
-node 1 a
-node 2 b
-node 3 c
-node 4 d
-node 5 e
-node 6 f
-node 7 g
-node 8 h
-node 9 i
-node 10 j
-node 12 l
-edge 1 1 4
-edge 2 2 4
-edge 3 2 5
-edge 4 2 6
-edge 5 3 6
-edge 6 3 9
-edge 7 4 7
-edge 8 5 8
-edge 9 6 5
-edge 10 7 8
-edge 11 9 8
-edge 12 10 8
-edge 13 1 2
-edge 14 2 1
-edge 17 9 12
-edge 18 12 6
-edge 19 6 9
+node 1 A_1 up
+node 2 A_2 constant
+node 3 A_3 constant
+node 4 B_1 constant
+node 5 B_2 constant
+node 6 B_3 constant
+node 7 C_1 up
+node 8 C_2 up
+node 9 C_3 up
+node 10 D_1 up
+node 11 D_2 constant
+node 12 D_3 constant
+node 13 E_1 constant
+node 14 E_2 up
+node 15 E_3 up
+edge 1 1 7 activation
+edge 2 1 8 activation
+edge 3 1 9 activation
+edge 4 1 10 activation
+edge 5 1 11 activation
+edge 6 1 12 activation
+edge 7 2 8 activation
+edge 8 2 9 activation
+edge 9 2 11 activation
+edge 10 2 12 activation
+edge 11 3 9 activation
+edge 12 3 12 activation
+edge 13 4 7 activation
+edge 14 4 8 activation
+edge 15 4 9 activation
+edge 16 4 10 activation
+edge 17 4 11 activation
+edge 18 4 12 activation
+edge 19 5 8 activation
+edge 20 5 9 activation
+edge 21 5 11 activation
+edge 22 5 12 activation
+edge 23 6 9 activation
+edge 24 6 12 activation
+edge 25 7 13 activation
+edge 26 7 14 activation
+edge 27 7 15 activation
+edge 28 8 14 activation
+edge 29 8 15 activation
+edge 30 9 15 activation

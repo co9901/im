@@ -9,13 +9,21 @@ class Graph:
 
   #graph Digraph
   #seeds
+  #nodeGroups
 
   def __init__(self):
     self.graph = nx.DiGraph()
     self.seeds = []
+    self.nodeGroups = {}
 
   def addNode(self, node):
     self.graph.add_node(node)
+
+    if self.nodeGroups.has_key(node.getGeneName()):
+      self.nodeGroups[node.getGeneName()].append(node)
+    else:
+      self.nodeGroups[node.getGeneName()] = [node]
+    sorted(self.nodeGroups[node.getGeneName()], key=lambda n: n.getTime())
 
   def addEdge(self, edge, srcId, destId):
     src = self.getNode(srcId)
@@ -25,7 +33,7 @@ class Graph:
       edge.setDest(dest)
       src.addOutEdge(edge)
       dest.addInEdge(edge)
-      self.graph.add_edge(edge.getSrc(), edge.getDest(), weight = edge.getProb())
+      self.graph.add_edge(edge.getSrc(), edge.getDest(), {'instance':edge})
 
   def getNodes(self):
     return self.graph.node
@@ -36,12 +44,14 @@ class Graph:
         return v
     return None
 
+  def getEdges(self):
+    return [e[2]['instance'] for e in self.graph.edges(data=True)]
+
   def draw(self):
-    nodeColor = []
-    for v in self.graph.node:
-      color = 'r' if v in self.seeds else 'b'
-      nodeColor.append(color)
-    nx.draw(self.graph, node_color=nodeColor)
+    nodeColor = ['r' if v.isUpRegulated() else 'b' for v in self.getNodes()]
+    edgeColor = ['r' if e.isValid() else 'black' for e in self.getEdges()]
+
+    nx.draw(self.graph, node_color=nodeColor, edge_color=edgeColor)
     plt.savefig("path.png")
 
   def getSeeds(self):
@@ -49,5 +59,8 @@ class Graph:
 
   def addSeed(self, seed):
     self.seeds.append(seed)
+
+  def getSameNameNodes(self, geneName):
+    return self.nodeGroups[geneName]
 
 

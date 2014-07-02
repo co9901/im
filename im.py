@@ -13,7 +13,8 @@ seedCount = 0
 
 def main():
 
-  generalGreedy()
+  validatePath()
+  #generalGreedy()
   printResults()
 
 def initialize(k,inputName,outputName):
@@ -31,10 +32,10 @@ def initialize(k,inputName,outputName):
   for line in inputFile:
     elements = line.split()
     if elements[0] == "node":
-      n = Node(elements[1], elements[2])
+      n = Node(elements[1], elements[2], elements[3])
       G.addNode(n)
     elif elements[0] == "edge":
-      e = Edge(elements[1])
+      e = Edge(elements[1], elements[4])
       G.addEdge(e, elements[2], elements[3])
   inputFile.close()
 
@@ -48,7 +49,6 @@ def printResults():
   for s in G.getSeeds():
     outputFile.write(s.getId() + " " + s.getName() + "\n")
   outputFile.close()
-
 
 
 def generalGreedy():
@@ -70,10 +70,54 @@ def cascade(seed, results): ##DFS
   if seed not in results:
     results.append(seed)
   for e in seed.getOutEdges():
-    dest = e.getDest()
-    if dest not in results:
-      results.append(dest)
-      cascade(dest, results)
+    if e.isValid():
+      dest = e.getDest()
+      if dest not in results:
+        results.append(dest)
+        cascade(dest, results)
+
+def validatePath():
+  global G
+
+  for e in G.getEdges():
+    if isValidPath(e):
+      e.validate()
+    else:
+      e.invalidate()
+
+def isValidPath(edge):
+  global G
+
+  src = edge.getSrc()
+  dest = edge.getDest()
+
+  if edge.isActivation():
+    if src.isUpRegulated() and dest.isUpRegulated():
+      if dest.getTime() - src.getTime() < 2 :
+        return True
+      else:
+        srcGroup = G.getSameNameNodes(src.getGeneName())
+        destGroup = G.getSameNameNodes(dest.getGeneName())
+
+        if len(srcGroup) != len(destGroup):
+          print "error"
+          return False
+
+        for i in range(srcGroup.index(src), len(srcGroup)):
+          tail = srcGroup[i]
+          if not tail.isUpRegulated():
+            break
+
+        for j in range(i+1, len(destGroup)):
+          head = destGroup[j]
+          if not head.isUpRegulated():
+            return False
+
+        return True
+
+  else:
+    #TODO implement inhibition
+    return False
 
 
 def getMaximumNode(nodes):
