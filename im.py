@@ -14,7 +14,7 @@ seedCount = 0
 def main():
 
   validatePath()
-  #generalGreedy()
+  generalGreedy()
   printResults()
 
 def initialize(k,inputName,outputName):
