@@ -1,9 +1,10 @@
 class Edge:
 
-  #id string
-  #src node
-  #dest node
-  #prob double
+  #id 
+  #src 
+  #dest 
+  #prob 
+  #activation
 
   def __init__(self, id):
     from node import Node
@@ -30,4 +31,7 @@ class Edge:
 
   def getProb(self):
     return self.prob
+
+  def isActivation(self):
+    return self.activation
 

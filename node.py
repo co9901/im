@@ -7,6 +7,9 @@ class Node:
   #inEdges
   #outEdges
   #extraInfluence
+  #geneName
+  #time
+  #isUpRegulated
 
   def __init__(self, id, name):
     self.id = id
@@ -22,6 +25,15 @@ class Node:
 
   def getName(self):
     return self.name
+
+  def getGeneName(self):
+    return self.geneName
+
+  def getTime(self):
+    return self.time
+
+  def isUpRegulated(self):
+    return self.isUpRegulated
 
   def getInEdges(self):
     return self.inEdges
