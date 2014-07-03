@@ -13,9 +13,11 @@ seedCount = 0
 
 def main():
 
+  global G
+
   validatePath()
-  #generalGreedy()
-  degreeDiscountRough()
+  generalGreedy()
+  #degreeDiscountRough()
   printResults()
 
 def initialize(k,inputName,outputName):
@@ -81,7 +83,10 @@ def degreeDiscountRough():
     for e in u.getInEdges():
       neighbor = e.getSrc()
       neighbor.setSeedNeighborCount(neighbor.getSeedNeighborCount()+1)
-      neighbor.setExtraInfluence(neighbor.getValidOutDegree()-neighbor.getSeedNeighborCount())
+      neighbor.setExtraInfluence(max(0,neighbor.getValidOutDegree()-neighbor.getSeedNeighborCount()))
+    for e in u.getOutEdges():
+      dest = e.getDest()
+      dest.setExtraInfluence(0)
 
 
 def generalGreedy():
