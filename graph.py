@@ -61,6 +61,9 @@ class Graph:
   def addSeed(self, seed):
     self.seeds.append(seed)
 
+  def clearSeed(self):
+    self.seeds = []
+
   def getSameNameNodes(self, geneName):
     return self.nodeGroups[geneName]
 
