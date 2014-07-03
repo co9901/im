@@ -103,12 +103,12 @@ def isValidPath(edge):
           print "error"
           return False
 
-        for i in range(srcGroup.index(src), len(srcGroup)):
+        for i in range(srcGroup.index(src), destGroup.index(dest)+1):
           tail = srcGroup[i]
           if not tail.isUpRegulated():
             break
 
-        for j in range(i+1, len(destGroup)):
+        for j in range(i+1, destGroup.index(dest)+1):
           head = destGroup[j]
           if not head.isUpRegulated():
             return False
