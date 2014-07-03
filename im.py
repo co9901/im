@@ -13,6 +13,7 @@ seedCount = 0
 
 def main():
 
+  validatePath()
   generalGreedy()
   printResults()
 
@@ -31,10 +32,10 @@ def initialize(k,inputName,outputName):
   for line in inputFile:
     elements = line.split()
     if elements[0] == "node":
-      n = Node(elements[1], elements[2])
+      n = Node(elements[1], elements[2], elements[3])
       G.addNode(n)
     elif elements[0] == "edge":
-      e = Edge(elements[1])
+      e = Edge(elements[1], elements[4])
       G.addEdge(e, elements[2], elements[3])
   inputFile.close()
 
@@ -44,11 +45,23 @@ def printResults():
 
   G.draw()
   outputFile = open(outputFileName,'w')
-  outputFile.write("Seed\n")
+  outputFile.write("Seed :\n")
   for s in G.getSeeds():
     outputFile.write(s.getId() + " " + s.getName() + "\n")
-  outputFile.close()
 
+  outputFile.write("========\n")
+  outputFile.write("propagated :\n")
+
+  validNodeSet = G.getValidNodeSet()
+  for k in validNodeSet.keys():
+    outputFile.write(k)
+    for n in validNodeSet[k]:
+      outputFile.write(" " + str(n.getTime()))
+    outputFile.write("\n")
+
+  outputFile.write("========\n")
+
+  outputFile.close()
 
 
 def generalGreedy():
@@ -70,11 +83,68 @@ def cascade(seed, results): ##DFS
   if seed not in results:
     results.append(seed)
   for e in seed.getOutEdges():
-    dest = e.getDest()
-    if dest not in results:
-      results.append(dest)
-      cascade(dest, results)
+    if e.isValid():
+      dest = e.getDest()
+      if dest not in results:
+        results.append(dest)
+        cascade(dest, results)
 
+def validatePath():
+  global G
+
+  for e in G.getEdges():
+    if isValidPath(e):
+      e.validate()
+      e.getSrc().validate()
+      e.getDest().validate()
+    else:
+      e.invalidate()
+
+def isValidPath(edge):
+
+  src = edge.getSrc()
+  dest = edge.getDest()
+
+  if edge.isActivation():
+    if src.getStatus() == dest.getStatus():
+      return checkTimeSeries(src, dest)
+    else:
+      return False
+  elif edge.isInhibition():
+    if src.getStatus() != dest.getStatus():
+      return checkTimeSeries(src, dest)
+    else:
+      return False
+  else:
+    print "error"
+    return False
+
+def checkTimeSeries(src, dest):
+  global G
+
+  if src.isConstant() or dest.isConstant():
+    return False
+
+  if dest.getTime() - src.getTime() < 2:
+    return True
+
+  srcGroup = G.getSameNameNodes(src.getGeneName())
+  destGroup = G.getSameNameNodes(dest.getGeneName())
+
+  if len(srcGroup) != len(destGroup):
+    print "error"
+    return False
+
+  for i in range(srcGroup.index(src), destGroup.index(dest)+1):
+    tail = srcGroup[i]
+    if tail.getStatus() != src.getStatus():
+      break
+  for j in range(i+1, destGroup.index(dest)+1):
+    head = destGroup[j]
+    if head.getStatus() != dest.getStatus():
+      return False
+
+  return True
 
 def getMaximumNode(nodes):
   max = nodes[0]

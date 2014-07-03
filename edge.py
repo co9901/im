@@ -1,14 +1,21 @@
 class Edge:
 
-  #id string
-  #src node
-  #dest node
-  #prob double
+  #id 
+  #src 
+  #dest 
+  #prob 
+  #valid
+  #status
 
-  def __init__(self, id):
+  STATUS_ACTIVATION = "activation"
+  STATUS_INHIBITION = "inhibition"
+
+  def __init__(self, id, status):
     from node import Node
     self.id = id
     self.prob = 1
+    self.valid = False
+    self.status = status
   
   def setSrc(self, src):
     self.src = src
@@ -18,6 +25,12 @@ class Edge:
 
   def setProb(self, prob):
     self.prob = prob
+
+  def validate(self):
+    self.valid = True
+
+  def invalidate(self):
+    self.valid = False
 
   def getId(self):
     return self.id
@@ -30,4 +43,13 @@ class Edge:
 
   def getProb(self):
     return self.prob
+
+  def isActivation(self):
+    return self.status == Edge.STATUS_ACTIVATION
+
+  def isInhibition(self):
+    return self.status == Edge.STATUS_INHIBITION
+
+  def isValid(self):
+    return self.valid
 
