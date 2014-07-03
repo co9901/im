@@ -45,9 +45,22 @@ def printResults():
 
   G.draw()
   outputFile = open(outputFileName,'w')
-  outputFile.write("Seed\n")
+  outputFile.write("Seed :\n")
   for s in G.getSeeds():
     outputFile.write(s.getId() + " " + s.getName() + "\n")
+
+  outputFile.write("========\n")
+  outputFile.write("propagated :\n")
+
+  validNodeSet = G.getValidNodeSet()
+  for k in validNodeSet.keys():
+    outputFile.write(k)
+    for n in validNodeSet[k]:
+      outputFile.write(" " + str(n.getTime()))
+    outputFile.write("\n")
+
+  outputFile.write("========\n")
+
   outputFile.close()
 
 
@@ -82,6 +95,8 @@ def validatePath():
   for e in G.getEdges():
     if isValidPath(e):
       e.validate()
+      e.getSrc().validate()
+      e.getDest().validate()
     else:
       e.invalidate()
 

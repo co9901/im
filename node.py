@@ -6,11 +6,11 @@ class Node:
   #name
   #inEdges
   #outEdges
-  #propagationEdges
   #extraInfluence
   #geneName
   #time
   #status
+  #valid
 
   STATUS_UP = "up"
   STATUS_DOWN = "down"
@@ -23,7 +23,7 @@ class Node:
     self.status = status
     self.inEdges = []
     self.outEdges = []
-    self.propagationEdges = []
+    self.valid = False
 
     names = name.split('_')
     self.geneName = names[0]
@@ -59,17 +59,11 @@ class Node:
   def getOutEdges(self):
     return self.outEdges
 
-  def getPropagationEdges(self):
-    return self.propagationEdges
-
   def addInEdge(self, edge):
     self.inEdges.append(edge)
 
   def addOutEdge(self, edge):
     self.outEdges.append(edge)
-
-  def addPropagationEdges(self, edge):
-    self.propagationEdges.append(edge)
   
   def getInDegree(self):
     return len(self.inEdges)
@@ -82,4 +76,13 @@ class Node:
 
   def getExtraInfluence(self):
     return self.extraInfluence
+
+  def isValid(self):
+    return self.valid
+
+  def validate(self):
+    self.valid = True
+
+  def invalidate(self):
+    self.valid = False
 

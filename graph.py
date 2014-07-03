@@ -63,4 +63,13 @@ class Graph:
   def getSameNameNodes(self, geneName):
     return self.nodeGroups[geneName]
 
+  def getValidNodeSet(self):
+    validNodeGroups = {}
+    for k in self.nodeGroups.keys():
+      validSet = [n for n in self.nodeGroups[k] if n.isValid()]
+      if len(validSet) > 0:
+        validNodeGroups[k] = validSet
+    return validNodeGroups
+
+
 
