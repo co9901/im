@@ -51,7 +51,8 @@ class Graph:
     nodeColor = ['r' if v.isUpRegulated() else 'b' for v in self.getNodes()]
     edgeColor = ['r' if e.isValid() else 'black' for e in self.getEdges()]
 
-    nx.draw(self.graph, node_color=nodeColor, edge_color=edgeColor)
+    pos = nx.graphviz_layout(self.graph, prog='dot')
+    nx.draw(self.graph, pos, node_color=nodeColor, edge_color=edgeColor)
     plt.savefig("path.png")
 
   def getSeeds(self):
