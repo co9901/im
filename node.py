@@ -53,6 +53,9 @@ class Node:
   def isConstant(self):
     return self.status == Node.STATUS_CONST
 
+  def getStatus(self):
+    return self.status
+
   def getInEdges(self):
     return self.inEdges
   

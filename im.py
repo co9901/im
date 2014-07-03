@@ -101,39 +101,50 @@ def validatePath():
       e.invalidate()
 
 def isValidPath(edge):
-  global G
 
   src = edge.getSrc()
   dest = edge.getDest()
 
   if edge.isActivation():
-    if src.isUpRegulated() and dest.isUpRegulated():
-      if dest.getTime() - src.getTime() < 2 :
-        return True
-      else:
-        srcGroup = G.getSameNameNodes(src.getGeneName())
-        destGroup = G.getSameNameNodes(dest.getGeneName())
-
-        if len(srcGroup) != len(destGroup):
-          print "error"
-          return False
-
-        for i in range(srcGroup.index(src), destGroup.index(dest)+1):
-          tail = srcGroup[i]
-          if not tail.isUpRegulated():
-            break
-
-        for j in range(i+1, destGroup.index(dest)+1):
-          head = destGroup[j]
-          if not head.isUpRegulated():
-            return False
-
-        return True
-
+    if src.getStatus() == dest.getStatus():
+      return checkTimeSeries(src, dest)
+    else:
+      return False
+  elif edge.isInhibition():
+    if src.getStatus() != dest.getStatus():
+      return checkTimeSeries(src, dest)
+    else:
+      return False
   else:
-    #TODO implement inhibition
+    print "error"
     return False
 
+def checkTimeSeries(src, dest):
+  global G
+
+  if src.isConstant() or dest.isConstant():
+    return False
+
+  if dest.getTime() - src.getTime() < 2:
+    return True
+
+  srcGroup = G.getSameNameNodes(src.getGeneName())
+  destGroup = G.getSameNameNodes(dest.getGeneName())
+
+  if len(srcGroup) != len(destGroup):
+    print "error"
+    return False
+
+  for i in range(srcGroup.index(src), destGroup.index(dest)+1):
+    tail = srcGroup[i]
+    if tail.getStatus() != src.getStatus():
+      break
+  for j in range(i+1, destGroup.index(dest)+1):
+    head = destGroup[j]
+    if head.getStatus() != dest.getStatus():
+      return False
+
+  return True
 
 def getMaximumNode(nodes):
   max = nodes[0]
