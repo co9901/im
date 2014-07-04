@@ -1,4 +1,5 @@
 import sys
+import time
 from node import Node
 from edge import Edge
 from graph import Graph
@@ -10,15 +11,18 @@ from graph import Graph
 
 G = Graph()
 seedCount = 0
+runningTimes = {}
 
 def main():
 
   global G
 
   validatePath()
-  generalGreedy()
-  #degreeDiscountRough()
-  printResults()
+  printPropagationPath('w')
+  generalGreedy('generalGreedy')
+  printResults('a', 'generalGreedy')
+  degreeDiscountRough('degreeDiscountRough')
+  printResults('a', 'degreeDiscountRough')
 
 def initialize(k,inputName,outputName):
   global G
@@ -42,17 +46,9 @@ def initialize(k,inputName,outputName):
       G.addEdge(e, elements[2], elements[3])
   inputFile.close()
 
-def printResults():
-  global G
+def printPropagationPath(mode):
   global outputFileName
-
-  G.draw()
-  outputFile = open(outputFileName,'w')
-  outputFile.write("Seed :\n")
-  for s in G.getSeeds():
-    outputFile.write(s.getId() + " " + s.getName() + "\n")
-
-  outputFile.write("========\n")
+  outputFile = open(outputFileName, mode)
   outputFile.write("propagated :\n")
 
   validNodeSet = G.getValidNodeSet()
@@ -63,40 +59,61 @@ def printResults():
     outputFile.write("\n")
 
   outputFile.write("========\n")
-
   outputFile.close()
 
-def degreeDiscountRough():
+def printResults(mode, method):
+  global G
+  global outputFileName
+  global runningTimes
+
+  G.draw()
+  outputFile = open(outputFileName, mode)
+  outputFile.write(method + " : " + str(runningTimes[method]) + "s\n")
+  outputFile.write("Seed :\n")
+  for s in G.getSeeds():
+    outputFile.write(s.getId() + " " + s.getName() + "\n")
+
+  outputFile.write("========\n")
+  outputFile.close()
+
+def degreeDiscountRough(method):
   global G
   global seedCount
+  global runningTimes
 
   G.clearSeed()
 
+  startTime = time.time()
   for v in G.getNodes():
     v.setSeedNeighborCount(0)
     v.setExtraInfluence(v.getValidOutDegree())
 
+  candidates = list(set(G.getNodes())-set(G.getSeeds()))
   for i in range(0,seedCount):
-    candidates = list(set(G.getNodes())-set(G.getSeeds()))
     u = getMaximumNode(candidates)
     G.addSeed(u)
+    candidates.remove(u)
     for e in u.getInEdges():
       neighbor = e.getSrc()
       neighbor.setSeedNeighborCount(neighbor.getSeedNeighborCount()+1)
-      neighbor.setExtraInfluence(max(0,neighbor.getValidOutDegree()-neighbor.getSeedNeighborCount()))
+      neighbor.setExtraInfluence(neighbor.getValidOutDegree()-neighbor.getSeedNeighborCount() if neighbor.getExtraInfluence() > 0 else -1)
     for e in u.getOutEdges():
       dest = e.getDest()
-      dest.setExtraInfluence(0)
+      dest.setExtraInfluence(-1)
+
+  runningTimes[method] = round(time.time() - startTime,2)
 
 
-def generalGreedy():
+def generalGreedy(method):
   global G
   global seedCount
+  global runningTimes
 
   G.clearSeed()
 
+  startTime = time.time()
+  candidates = list(set(G.getNodes())-set(G.getSeeds()))
   for i in range(0,seedCount):
-    candidates = list(set(G.getNodes())-set(G.getSeeds()))
     for v in candidates:
       v.setExtraInfluence(0)
       results = []
@@ -104,7 +121,11 @@ def generalGreedy():
         cascade(s, results)
       cascade(v, results)
       v.setExtraInfluence(len(results))
-    G.addSeed(getMaximumNode(candidates))
+    selected = getMaximumNode(candidates)
+    G.addSeed(selected)
+    candidates.remove(selected)
+
+  runningTimes[method] = round(time.time() - startTime,2)
 
 def cascade(seed, results): ##DFS
   if seed not in results:
