@@ -11,6 +11,8 @@ class Node:
   #time
   #status
   #valid
+  #seedNeighborCount
+  #validOutDegree
 
   STATUS_UP = "up"
   STATUS_DOWN = "down"
@@ -24,6 +26,7 @@ class Node:
     self.inEdges = []
     self.outEdges = []
     self.valid = False
+    self.validOutDegree = 0
 
     names = name.split('_')
     self.geneName = names[0]
@@ -74,6 +77,12 @@ class Node:
   def getOutDegree(self):
     return len(self.outEdges)
 
+  def setValidOutDegree(self, outDegree):
+    self.validOutDegree = outDegree
+
+  def getValidOutDegree(self):
+    return self.validOutDegree
+
   def setExtraInfluence(self, extraInfluence):
     self.extraInfluence = extraInfluence
 
@@ -88,4 +97,10 @@ class Node:
 
   def invalidate(self):
     self.valid = False
+
+  def setSeedNeighborCount(self, seedNeighborCount):
+    self.seedNeighborCount = seedNeighborCount
+
+  def getSeedNeighborCount(self):
+    return self.seedNeighborCount
 
