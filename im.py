@@ -18,11 +18,12 @@ def main():
   global G
 
   validatePath()
-  printPropagationPath('w')
-  generalGreedy('generalGreedy')
-  printResults('a', 'generalGreedy')
-  degreeDiscountRough('degreeDiscountRough')
-  printResults('a', 'degreeDiscountRough')
+  weightedCascade('weightedCascade')
+  #printPropagationPath('w')
+  #generalGreedy('generalGreedy')
+  #printResults('a', 'generalGreedy')
+  #degreeDiscountRough('degreeDiscountRough')
+  #printResults('a', 'degreeDiscountRough')
 
 def initialize(k,inputName,outputName):
   global G
@@ -75,6 +76,61 @@ def printResults(mode, method):
 
   outputFile.write("========\n")
   outputFile.close()
+
+def weightedCascade(method):
+  global G
+  global seedCount
+  global runningTimes
+
+  G.clearSeed()
+
+  startTime = time.time()
+
+
+  for i in range(0,seedCount):
+    for v in G.getNodes():
+      v.setExtraInfluence(0)
+      v.setIndex(-1)
+      v.setLowlink(-1)
+    result = collapse(G) 
+
+
+  runningTimes[method] = round(time.time() - startTime,2)
+
+def collapse(G):
+  index = [0]
+  result = []
+  stack = [] 
+
+  def strongConnect(v):
+    v.setIndex(index[0])
+    v.setLowlink(index[0])
+    index[0] += 1
+    stack.append(v)
+
+    for e in v.getOutEdges():
+      w = e.getDest()
+      if w.getIndex() < 0:
+        strongConnect(w)
+        v.setLowlink(min(v.getLowlink(), w.getLowlink()))
+      elif w in stack:
+        v.setLowlink(min(v.getLowlink(), w.getLowlink()))
+
+    if v.getLowlink() == v.getIndex():
+      ## start a new strongly connected component ??
+      temp = []
+      while True:
+        w = stack.pop()
+        temp.append(w) 
+        if w == v:
+          break
+      result.append(temp)
+
+  for v in G.getNodes():
+    if v.getIndex() < 0:
+      strongConnect(v)
+
+  return result
 
 def degreeDiscountRough(method):
   global G
